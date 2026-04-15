@@ -1,4 +1,3 @@
-// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAo7nA2YT7W32bVvtqdkjC1KjpOcmiuwzI",
   authDomain: "codequest-shriyan0910.firebaseapp.com",
@@ -10,8 +9,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-
-// Global variables
 let dashEmMap = null;
 let myLat = null;
 let myLng = null;
@@ -19,8 +16,6 @@ let currentLocationMarker = null;
 let hospitalsLayer = null;
 let selectedInjury = '';
 let isAvailable = true;
-
-// ========== NAVIGATION ==========
 function navigate(page) {
   const pages = ['dashboard', 'blood', 'firstaid', 'about'];
   pages.forEach(p => {
@@ -38,7 +33,6 @@ function navigate(page) {
   });
   if (page === 'dashboard') setTimeout(() => initDashMap(), 100);
 }
-
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', (e) => {
     e.preventDefault();
@@ -46,8 +40,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
     if (page) navigate(page);
   });
 });
-
-// ========== DASHBOARD MAP ==========
 function initDashMap() {
   if (dashEmMap) {
     setTimeout(() => dashEmMap.invalidateSize(), 100);
@@ -59,7 +51,6 @@ function initDashMap() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(dashEmMap);
   setTimeout(() => dashEmMap.invalidateSize(), 200);
 }
-
 function locateAndShowHospitals() {
   if (!navigator.geolocation) {
     alert('Geolocation is not supported');
@@ -93,7 +84,6 @@ function locateAndShowHospitals() {
     }
   );
 }
-
 function findNearbyHospitals(lat, lng) {
   const overpassUrl = `https://overpass-api.de/api/interpreter?data=[out:json];(node["amenity"="hospital"](around:5000,${lat},${lng});node["amenity"="clinic"](around:5000,${lat},${lng}););out body;`;
   fetch(overpassUrl)
@@ -150,8 +140,6 @@ function displayHospitalList(hospitals) {
     </div>
   `).join('');
 }
-
-// ========== SOS ==========
 function triggerSOS() {
   if (confirm('SOS triggered! TS Medi-O-Care™ will alert emergency contacts. Continue?')) {
     if (myLat && myLng) {
@@ -161,8 +149,6 @@ function triggerSOS() {
     }
   }
 }
-
-// ========== BLOOD DONOR ==========
 function toggleRegisterForm() {
   const form = document.getElementById('registerForm');
   const btn = document.getElementById('registerDonorBtn');
@@ -175,7 +161,6 @@ function toggleRegisterForm() {
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 8v6m-3-3h6"/><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg> Register as Donor`;
   }
 }
-
 function toggleAvailable() {
   const toggle = document.getElementById('availableToggle');
   if (!toggle) return;
@@ -183,7 +168,6 @@ function toggleAvailable() {
   if (isAvailable) toggle.classList.add('active');
   else toggle.classList.remove('active');
 }
-
 function registerDonor() {
   const name = document.getElementById('donorName').value.trim();
   const blood = document.getElementById('donorBloodType').value;
@@ -209,7 +193,6 @@ function registerDonor() {
       alert('Error registering. Please try again.');
     });
 }
-
 function loadDonors() {
   const donorCountSpan = document.getElementById('donorCount');
   const donorListDiv = document.getElementById('donorList');
@@ -247,19 +230,15 @@ function loadDonors() {
     }
   });
 }
-
 function resetBlood() {
   const filterSelect = document.getElementById('bloodTypeFilter');
   if (filterSelect) filterSelect.value = '';
   loadDonors();
 }
-
 if (document.getElementById('bloodTypeFilter')) {
   document.getElementById('bloodTypeFilter').addEventListener('change', loadDonors);
 }
-
-// ========== FIRST AID SURVEY ==========
-function selectInjury(type) {
+  function selectInjury(type) {
   selectedInjury = type;
   const stepInjury = document.getElementById('step-injury');
   const stepSeverity = document.getElementById('step-severity');
@@ -268,7 +247,6 @@ function selectInjury(type) {
   if (severityTitle) severityTitle.textContent = `How severe is the ${type}?`;
   if (stepSeverity) stepSeverity.style.display = 'block';
 }
-
 function selectSeverity(level) {
   const stepSeverity = document.getElementById('step-severity');
   const stepGuidance = document.getElementById('step-guidance');
@@ -277,10 +255,9 @@ function selectSeverity(level) {
   if (guidanceBody) {
     const html = getGuidance(selectedInjury, level);
     guidanceBody.innerHTML = html;
-  }
+}
   if (stepGuidance) stepGuidance.style.display = 'block';
 }
-
 function getGuidance(injury, level) {
   const guidance = {
     Burn: { Mild: `<h4>🔥 Mild Burn — First Aid Steps</h4><ol><li>Cool under cool (not cold) running water for 10–20 min.</li><li>Remove jewellery/clothing near the area (unless stuck).</li><li>Cover loosely with a sterile non-stick bandage.</li><li>Take OTC pain relief if needed.</li><li>Do NOT apply butter, toothpaste or ice.</li></ol>`, Moderate: `<h4>🔥 Moderate Burn — First Aid Steps</h4><ol><li>Cool with running water for at least 20 min.</li><li>Do not break blisters.</li><li>Cover with a clean, non-fluffy material.</li><li>Seek medical attention promptly.</li><li>Monitor for signs of infection.</li></ol>`, Severe: `<h4>🔥 Severe Burn — CALL 108 IMMEDIATELY</h4><ol><li>Call emergency services (108) right away.</li><li>Do NOT remove burned clothing stuck to skin.</li><li>Cover loosely with a clean sheet or cling film.</li><li>Keep the person warm to prevent shock.</li><li>Do not give anything to eat or drink.</li></ol>` },
@@ -319,76 +296,62 @@ function switchTab(tab) {
   if (tabChat) tabChat.classList.toggle('active', tab === 'chat');
 }
 
-// ========== INTELLIGENT KEYWORD-BASED CHATBOT (NO API, 100% OFFLINE) ==========
-
-// Comprehensive keyword-response database
 const chatbotResponses = {
-  // Cardiac / Chest
+
   chest: "⚠️ CHEST PAIN / HEART ATTACK:\n1. Call 108 IMMEDIATELY!\n2. Make the person sit or lie down comfortably.\n3. Loosen tight clothing around the neck and chest.\n4. If not allergic, give 325mg aspirin (chewable).\n5. Ask if they have nitroglycerin – help them take it.\n6. Stay calm and reassure them.\n7. If unconscious, check breathing and start CPR.\n\n⚠️ This is not a substitute for professional medical care.",
   
   heart: "⚠️ HEART ATTACK SIGNS:\n• Chest pain/pressure\n• Pain spreading to arm, jaw, back\n• Shortness of breath\n• Cold sweat, nausea\n\nACTION:\n1. Call 108 immediately!\n2. Have person sit or lie down\n3. Give aspirin if available (325mg, chewable)\n4. Loosen tight clothing\n5. If unconscious, start CPR\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Breathing / Choking
+
   choking: "⚠️ CHOKING (Heimlich Maneuver):\nFor CONSCIOUS adult/child:\n1. Stand behind, wrap arms around waist.\n2. Make a fist, place above navel.\n3. Grasp fist with other hand, thrust inward and upward.\n4. Repeat until object comes out.\n\nFor INFANT (<1 year):\n1. Place face down on forearm, support head.\n2. Give 5 back blows between shoulder blades.\n3. Turn face up, give 5 chest thrusts (2 fingers).\n4. Repeat until object comes out or help arrives.\n\nIf unconscious: start CPR immediately!\nCall 108 if object doesn't clear.\n\n⚠️ This is not a substitute for professional medical care.",
   
   breath: "⚠️ BREATHING PROBLEMS / ASTHMA ATTACK:\n1. Help person sit upright.\n2. Loosen tight clothing.\n3. Use rescue inhaler if available (blue).\n4. Give 2-4 puffs every 20 minutes if severe.\n5. Encourage slow, deep breaths.\n6. Call 108 if breathing worsens or lips turn blue.\n\n⚠️ This is not a substitute for professional medical care.",
   
   asthma: "⚠️ ASTHMA ATTACK:\n1. Sit upright – never lie down.\n2. Use blue rescue inhaler (2-4 puffs).\n3. Wait 4 minutes, if no improvement take 2-4 more puffs.\n4. If still no improvement, call 108.\n5. Keep calm and breathe slowly.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Bleeding / Wounds
+
   bleeding: "🩸 SEVERE BLEEDING:\n1. Apply direct pressure with clean cloth.\n2. Elevate the injured area above heart.\n3. If cloth soaks through, add more – DON'T remove.\n4. Apply pressure to pressure point (armpit/groin).\n5. Use tourniquet ONLY if life-threatening bleeding from limb.\n6. Call 108 immediately!\n7. Keep person warm and calm.\n\n⚠️ This is not a substitute for professional medical care.",
   
   cut: "🔪 CUT / WOUND:\n1. Wash hands before touching wound.\n2. Apply gentle pressure with clean cloth.\n3. Rinse with clean water.\n4. Apply antiseptic.\n5. Cover with sterile bandage.\n6. Watch for signs of infection (redness, swelling, fever).\n\nSee doctor if: deep wound, won't stop bleeding, caused by animal/rusty object.\n\n⚠️ This is not a substitute for professional medical care.",
   
   wound: "🩹 WOUND CARE:\n1. Stop bleeding with pressure.\n2. Clean with saline or clean water.\n3. Remove debris with tweezers (clean).\n4. Apply antibiotic ointment.\n5. Cover with sterile bandage.\n6. Change dressing daily.\n7. Watch for infection signs.\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Burns
+
   burn: "🔥 BURN TREATMENT:\n1. Cool under running water (not ice) for 20 minutes.\n2. Remove jewellery/clothing near burn.\n3. Cover with sterile non-stick bandage.\n4. Take pain reliever if needed.\n5. DO NOT apply butter, oil, ice, or toothpaste.\n6. DO NOT break blisters.\n\nSeek medical help if: large burn, face/hands/genitals, electrical/chemical burn.\nCall 108 for severe burns!\n\n⚠️ This is not a substitute for professional medical care.",
   
   scald: "🔥 SCALD (HOT LIQUID) BURN:\n1. Remove wet clothing immediately.\n2. Cool under running water for 20 minutes.\n3. Cover with clean, dry cloth.\n4. Seek medical help if skin blisters or is large area.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Fractures / Sprains
   fracture: "🦴 FRACTURE / BROKEN BONE:\n1. Do NOT try to straighten the bone.\n2. Immobilize the area – use splint if possible.\n3. Apply ice wrapped in cloth (20 min on, 20 off).\n4. Elevate if possible.\n5. Take pain reliever.\n6. Seek medical attention immediately.\n7. If open fracture (bone through skin), cover with clean cloth, DON'T push bone back.\n\nCall 108 if severe pain, deformity, or unable to move.\n\n⚠️ This is not a substitute for professional medical care.",
   
   sprain: "🦵 SPRAIN (Ligament injury):\nR.I.C.E. Method:\n• REST – avoid using injured area\n• ICE – apply ice pack 15-20 min every 2-3 hours\n• COMPRESS – wrap with elastic bandage (not too tight)\n• ELEVATE – raise above heart level\n\nSee doctor if: can't bear weight, severe swelling, deformity.\n\n⚠️ This is not a substitute for professional medical care.",
   
   twist: "🦶 TWISTED ANKLE:\n1. Rest – don't walk on it.\n2. Ice for 15-20 minutes.\n3. Compression with elastic bandage.\n4. Elevate above heart.\n5. Take pain reliever.\n\nSee doctor if can't bear weight or severe swelling.\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Head / Concussion
   head: "🧠 HEAD INJURY / CONCUSSION:\n1. Keep person still and awake.\n2. Apply ice to reduce swelling.\n3. Watch for: confusion, vomiting, unequal pupils, seizure, loss of consciousness.\n4. If any danger signs appear – call 108 immediately!\n5. Don't give pain relievers like aspirin/ibuprofen.\n6. Don't leave person alone for 24 hours.\n\nCall 108 if: loss of consciousness, repeated vomiting, seizure, slurred speech, weakness.\n\n⚠️ This is not a substitute for professional medical care.",
   
   concussion: "🧠 CONCUSSION SYMPTOMS:\n• Headache\n• Dizziness\n• Confusion\n• Nausea\n• Blurred vision\n• Memory problems\n\nACTION: Rest, avoid screens, seek medical evaluation within 24 hours.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Shock
   shock: "⚡ SHOCK (Medical emergency):\nSIGNS: pale/cold skin, rapid pulse, shallow breathing, weakness.\n\nACTION:\n1. Call 108 immediately!\n2. Lay person flat, elevate legs 12 inches (unless head/leg injury).\n3. Loosen tight clothing.\n4. Keep warm with blanket.\n5. Don't give food or water.\n6. If vomiting, turn head to side.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Seizures / Epilepsy
+
   seizure: "⚠️ SEIZURE / EPILEPSY:\nDO:\n1. Clear area of dangerous objects.\n2. Cushion head with soft item.\n3. Time the seizure.\n4. Turn person on side after seizure ends.\n\nDON'T:\n1. DON'T hold person down.\n2. DON'T put anything in mouth.\n3. DON'T give food/water until fully alert.\n\nCall 108 if: seizure lasts >5 minutes, first seizure, pregnant, injured, difficulty breathing.\n\n⚠️ This is not a substitute for professional medical care.",
   
   epilepsy: "⚠️ EPILEPSY / SEIZURE:\nSame as above. Most seizures end in 2-3 minutes. Stay calm, protect from injury, roll to side after.\n\n⚠️ This is not a substitute for professional medical care.",
+    stroke: "⚠️ STROKE – ACT F.A.S.T.:\n• FACE – ask to smile (drooping?)\n• ARMS – ask to raise both (one drifting?)\n• SPEECH – ask to repeat sentence (slurred?)\n• TIME – Call 108 immediately!\n\nOther signs: sudden numbness, confusion, vision problems, severe headache, trouble walking.\n\nEvery minute counts! Call 108 immediately!\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Stroke
-  stroke: "⚠️ STROKE – ACT F.A.S.T.:\n• FACE – ask to smile (drooping?)\n• ARMS – ask to raise both (one drifting?)\n• SPEECH – ask to repeat sentence (slurred?)\n• TIME – Call 108 immediately!\n\nOther signs: sudden numbness, confusion, vision problems, severe headache, trouble walking.\n\nEvery minute counts! Call 108 immediately!\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Diabetes
+
   diabetes: "⚠️ DIABETIC EMERGENCY (Low blood sugar):\nSIGNS: sweating, shaking, weakness, confusion.\n\nACTION (if conscious):\n1. Give fast-acting sugar: juice, soda (not diet), candy, glucose tablets.\n2. Wait 15 minutes, recheck.\n3. If no improvement, give more sugar.\n4. If unconscious, DO NOT give food/water – call 108!\n\n⚠️ This is not a substitute for professional medical care.",
   
   hypo: "⚠️ HYPOGLYCEMIA (Low blood sugar):\nSame as diabetes emergency. Give sugar immediately.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Allergies
   allergy: "⚠️ SEVERE ALLERGIC REACTION (Anaphylaxis):\nSIGNS: difficulty breathing, swollen tongue/face, hives, vomiting, dizziness.\n\nACTION:\n1. Call 108 immediately!\n2. Use epinephrine auto-injector (EpiPen) if available.\n3. Lay person flat, elevate legs.\n4. If breathing stops, start CPR.\n\n⚠️ This is not a substitute for professional medical care.",
   
   anaphylaxis: "⚠️ ANAPHYLAXIS:\nLife-threatening allergic reaction. Call 108 immediately! Use EpiPen if available.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Poisoning
+
   poison: "⚠️ POISONING:\n1. Call poison control (1-800-222-1222) or 108.\n2. DO NOT induce vomiting unless told.\n3. If person unconscious, turn on side, check breathing.\n4. Bring poison container to hospital.\n\n⚠️ This is not a substitute for professional medical care.",
   
   overdose: "⚠️ DRUG OVERDOSE:\n1. Call 108 immediately!\n2. Check breathing – start CPR if needed.\n3. Turn person on side to prevent choking.\n4. Don't leave them alone.\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Drowning
+
   drowning: "⚠️ DROWNING:\n1. Call 108 immediately!\n2. Remove from water.\n3. Check breathing – start CPR if not breathing.\n4. Give 2 rescue breaths, then 30 chest compressions.\n5. Continue until help arrives.\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Heat / Cold
   heatstroke: "⚠️ HEAT STROKE (Life-threatening):\nSIGNS: high body temp, hot/dry skin, rapid pulse, confusion, unconsciousness.\n\nACTION:\n1. Call 108 immediately!\n2. Move to cool area.\n3. Remove excess clothing.\n4. Cool with ice packs (neck, armpits, groin).\n5. Fan while misting with water.\n\n⚠️ This is not a substitute for professional medical care.",
   
   heat: "⚠️ HEAT EXHAUSTION:\nSIGNS: heavy sweating, weakness, nausea, headache.\n\nACTION:\n1. Move to cool area.\n2. Drink cool water.\n3. Apply cool cloths.\n4. Rest.\n\nIf symptoms worsen or last >1 hour, seek medical help.\n\n⚠️ This is not a substitute for professional medical care.",
@@ -396,35 +359,27 @@ const chatbotResponses = {
   hypothermia: "❄️ HYPOTHERMIA:\nSIGNS: shivering, confusion, slurred speech, weak pulse.\n\nACTION:\n1. Call 108 if severe.\n2. Move to warm area.\n3. Remove wet clothing.\n4. Warm slowly with blankets (not direct heat).\n5. Give warm drinks (if conscious).\n\n⚠️ This is not a substitute for professional medical care.",
   
   frostbite: "❄️ FROSTBITE:\n1. Move to warm area.\n2. Soak in warm water (not hot) for 30 min.\n3. DON'T rub or use direct heat.\n4. Cover with dry, sterile gauze.\n5. Seek medical attention.\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Bites
+
   snakebite: "🐍 SNAKE BITE:\n1. Call 108 immediately!\n2. Keep person still and calm.\n3. Remove jewellery/ tight clothing.\n4. Position bite below heart.\n5. Cover bite with clean cloth.\n\nDON'T: cut wound, suck venom, apply ice, use tourniquet.\n\n⚠️ This is not a substitute for professional medical care.",
   
   insect: "🐝 INSECT BITE/STING:\n1. Remove stinger by scraping (don't squeeze).\n2. Wash with soap and water.\n3. Apply ice pack.\n4. Take antihistamine for itching.\n\nCall 108 if signs of allergic reaction (difficulty breathing, swelling face/throat).\n\n⚠️ This is not a substitute for professional medical care.",
   
   dogbite: "🐕 DOG/ANIMAL BITE:\n1. Wash wound with soap and water for 15 minutes.\n2. Apply antibiotic ointment.\n3. Cover with sterile bandage.\n4. Seek medical attention (rabies risk).\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // CPR
   cpr: "🫀 CPR (Cardiopulmonary Resuscitation):\nFor UNCONSCIOUS not breathing:\n1. Call 108 immediately.\n2. Place hands on center of chest.\n3. Push hard and fast (100-120 compressions/minute).\n4. Push 2 inches deep.\n5. Allow chest to fully recoil.\n6. Give 30 compressions then 2 rescue breaths.\n7. Continue until help arrives.\n\nFor INFANT: use 2 fingers, push 1.5 inches deep.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Nosebleed
   nosebleed: "👃 NOSEBLEED:\n1. Sit upright, lean slightly forward.\n2. Pinch nostrils together for 10-15 minutes.\n3. Apply ice pack to nose bridge.\n4. Don't tilt head back.\n5. Don't blow nose for several hours.\n\nSee doctor if bleeding >30 minutes, or after head injury.\n\n⚠️ This is not a substitute for professional medical care.",
-  
-  // Fainting
+
+
   faint: "😵 FAINTING:\n1. Lay person flat.\n2. Elevate legs 12 inches.\n3. Loosen tight clothing.\n4. Check breathing.\n5. If unconscious >1 minute, call 108.\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // Pregnancy
   pregnancy: "🤰 PREGNANCY EMERGENCY:\nCall 108 immediately if:\n• Bleeding\n• Severe abdominal pain\n• Water breaks before 37 weeks\n• Seizure\n• Severe headache with vision changes\n• Decreased baby movement\n\n⚠️ This is not a substitute for professional medical care.",
   
-  // General / Fallback
   default: "I'm Lifeline AI – your First Aid assistant. I can help with:\n\n• Cardiac: chest pain, heart attack\n• Breathing: choking, asthma\n• Bleeding & wounds\n• Burns & scalds\n• Fractures & sprains\n• Head injuries\n• Shock & seizures\n• Stroke & diabetes emergencies\n• Allergies & poisoning\n• Heatstroke & hypothermia\n• Bites (snake, insect, animal)\n• CPR & nosebleeds\n• Fainting & pregnancy emergencies\n\nPlease describe your emergency clearly.\n\n⚠️ This is not a substitute for professional medical care. Call 108 for emergencies!"
 };
 
-// Function to detect keywords and return appropriate response
 function getChatbotResponse(message) {
   const lowerMsg = message.toLowerCase();
-  
-  // Check each keyword category
   if (lowerMsg.includes('chest') || lowerMsg.includes('heart') || lowerMsg.includes('cardiac') || lowerMsg.includes('heart attack')) {
     return chatbotResponses.chest;
   }
@@ -522,30 +477,22 @@ function getChatbotResponse(message) {
     return chatbotResponses.pregnancy;
   }
   
-  // If no specific keywords matched, return default
   return chatbotResponses.default;
 }
 
-// AI Chat function (keyword-based, no API)
 async function sendChat() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   
   if (!msg) return;
   
-  // Clear input and show user message
   input.value = '';
   appendMsg(msg, 'user');
   
-  // Show typing indicator
   const typingDiv = appendTyping();
   
-  // Simulate processing delay (makes it feel more natural)
   setTimeout(() => {
-    // Get response based on keywords
     const response = getChatbotResponse(msg);
-    
-    // Remove typing indicator and show response
     if (typingDiv) typingDiv.remove();
     appendMsg(response, 'ai');
   }, 500);
@@ -577,7 +524,6 @@ function appendTyping() {
   return div;
 }
 
-// ========== DARK MODE TOGGLE ==========
 const darkToggleBtn = document.getElementById('darkModeToggle');
 if (darkToggleBtn) {
   darkToggleBtn.addEventListener('click', () => {
@@ -592,7 +538,7 @@ if (darkToggleBtn) {
   }
 }
 
-// ========== INITIALIZATION ==========
+
 window.addEventListener('DOMContentLoaded', () => {
   console.log('TS Medi-O-Care™ Started (Keyword-based AI Chatbot)');
   initDashMap();

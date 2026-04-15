@@ -286,8 +286,6 @@ body.dark .sidebar-emergency { background: #1e293b; }
   color: var(--blue);
 }
 .hospital-dir:hover { background: var(--blue); color: white; }
-
-/* BLOOD SUPPORT STYLES */
 .blood-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
 .blood-select {
   flex: 1; max-width: 480px;
@@ -384,8 +382,6 @@ body.dark .sidebar-emergency { background: #1e293b; }
   gap: 14px;
   box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
-
-/* FIRST AID STYLES */
 .tab-bar {
   display: flex; gap: 4px; margin-bottom: 20px;
   background: #f1f5f9; border-radius: 8px; padding: 3px; width: fit-content;
@@ -490,8 +486,6 @@ body.dark .sidebar-emergency { background: #1e293b; }
   0%,80%,100% { transform: translateY(0); }
   40%          { transform: translateY(-6px); }
 }
-
-/* ABOUT US PAGE STYLES (including new simple contact cards) */
 .about-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -638,8 +632,6 @@ body.dark .sidebar-emergency { background: #1e293b; }
 .founder-info-box strong {
   color: var(--blue);
 }
-
-/* Footer styles */
 .site-footer {
   background: var(--white);
   border-top: 1px solid var(--border);

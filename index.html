@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TS Medi-O-Care™ – Emergency Response | We care for the mediocres</title>
+<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-name">TS Medi-O-Care™</span>
+      <span class="logo-sub">Emergency Response</span>
+    </div>
+  </div>
+  <div class="sidebar-slogan">💙 We care for the mediocres</div>
+  <nav class="sidebar-nav">
+    <div class="nav-item" data-page="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="blood">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+      Blood Support
+    </div>
+    <div class="nav-item" data-page="firstaid">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+      First Aid
+    </div>
+    <div class="nav-item" data-page="about">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      About Us
+    </div>
+  </nav>
+  <div class="dark-toggle-btn" id="darkModeToggle">🌙 Dark Mode</div>
+  <div class="sidebar-emergency">
+    <div class="em-title">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Emergency?
+    </div>
+    <p>Press the SOS button on the dashboard for immediate help.</p>
+    <button class="btn-dashboard" onclick="navigate('dashboard')">Go to Dashboard</button>
+  </div>
+</aside>
+
+<main class="main">
+
+  <!-- DASHBOARD PAGE (unchanged) -->
+  <div id="page-dashboard" class="page">
+    <div class="dash-header">
+      <div>
+        <h1>TS Medi-O-Care™</h1>
+        <p>Smart Emergency Response Platform — We care for the mediocres</p>
+      </div>
+      <div class="coords-badge" id="dashCoords">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 0 1 8-8z"/></svg>
+        Enable location to see coordinates
+      </div>
+    </div>
+    <div class="emergency-contacts-card">
+      <div class="sos-btn" onclick="triggerSOS()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>SOS</span>
+        <span class="sos-sub">TAP FOR HELP</span>
+      </div>
+      <div class="emergency-contacts-info">
+        <h3>Emergency Contacts</h3>
+        <p>Tap to call immediately</p>
+        <div class="contact-cards">
+          <div class="contact-card amb" onclick="window.location.href='tel:108'"><span>🚑</span><div class="cc-info"><div class="cc-name">Ambulance</div><div class="cc-num">108</div></div></div>
+          <div class="contact-card pol" onclick="window.location.href='tel:100'"><span>🚓</span><div class="cc-info"><div class="cc-name">Police</div><div class="cc-num">100</div></div></div>
+          <div class="contact-card fire" onclick="window.location.href='tel:101'"><span>🚒</span><div class="cc-info"><div class="cc-name">Fire</div><div class="cc-num">101</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-feature-grid">
+      <div class="feature-card green" onclick="navigate('blood')">
+        <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <h3>Blood Support</h3><p>Find donors nearby</p>
+      </div>
+      <div class="feature-card blue" onclick="navigate('firstaid')">
+        <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+        <h3>First Aid</h3><p>AI-powered guidance</p>
+      </div>
+      <div class="feature-card purple" onclick="navigate('about')">
+        <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <h3>About Us</h3><p>Learn more & contact</p>
+      </div>
+    </div>
+    <div class="dash-maps">
+      <div class="map-card full-width">
+        <div class="map-card-header">
+          <h4><span class="dot-blue"></span> Lifeline Emergency Map</h4>
+          <button class="btn-locate" id="locateMeBtn" onclick="locateAndShowHospitals()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 0 1 8-8z"/></svg>
+            Show My Location & Nearby Hospitals
+          </button>
+        </div>
+        <div class="map-container" id="emergencyMap"></div>
+        <div id="hospitalList" class="hospital-list"></div>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-emergency-numbers">
+          <h4>🚨 Emergency Helplines</h4>
+          <ul>
+            <li><span class="emergency-icon">🚑</span> Ambulance: <strong>108</strong></li>
+            <li><span class="emergency-icon">🚓</span> Police: <strong>100</strong></li>
+            <li><span class="emergency-icon">🚒</span> Fire: <strong>101</strong></li>
+          </ul>
+        </div>
+        <div class="footer-copyright">
+          <p>© 2026 TS Medi-O-Care™ – We care for the mediocres</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- BLOOD SUPPORT PAGE (unchanged) -->
+  <div id="page-blood" class="page">
+    <div class="page-header">
+      <div class="page-title-group">
+        <h1>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          Blood Support
+        </h1>
+        <p>Find donors or register as one</p>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="blood-controls">
+        <select class="blood-select" id="bloodTypeFilter">
+          <option value="">All blood types</option>
+          <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+          <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+        </select>
+        <button class="btn-reset" onclick="resetBlood()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          Reset
+        </button>
+        <button class="btn-register-donor" id="registerDonorBtn" onclick="toggleRegisterForm()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 8v6m-3-3h6"/><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+          Register as Donor
+        </button>
+      </div>
+      <div class="register-form-card" id="registerForm" style="display:none">
+        <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 8v6m-3-3h6"/><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg> Register as Blood Donor</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" placeholder="John Doe" id="donorName"/></div>
+          <div class="form-group"><label>Blood Type</label><select id="donorBloodType"><option value="">Select type</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone Number</label><input type="text" placeholder="+91 XXXXXXXXXX" id="donorPhone"/></div>
+          <div class="form-group"><label>Email</label><input type="email" placeholder="donor@email.com" id="donorEmail"/></div>
+        </div>
+        <div class="form-row-bottom">
+          <div class="toggle-wrap">
+            <div class="toggle" id="availableToggle" onclick="toggleAvailable()"></div>
+            <span>Currently available to donate</span>
+          </div>
+        </div>
+        <button class="btn-register-submit" onclick="registerDonor()">Register</button>
+      </div>
+      <p class="donor-count" id="donorCount">Loading donors...</p>
+      <div class="empty-state" id="donorEmptyState" style="display:none">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        <p>No donors found. Be the first to register!</p>
+      </div>
+      <div id="donorList"></div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-emergency-numbers">
+          <h4>🚨 Emergency Helplines</h4>
+          <ul>
+            <li><span class="emergency-icon">🚑</span> Ambulance: <strong>108</strong></li>
+            <li><span class="emergency-icon">🚓</span> Police: <strong>100</strong></li>
+            <li><span class="emergency-icon">🚒</span> Fire: <strong>101</strong></li>
+          </ul>
+        </div>
+        <div class="footer-copyright">
+          <p>© 2026 TS Medi-O-Care™ – We care for the mediocres</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- FIRST AID PAGE (unchanged) -->
+  <div id="page-firstaid" class="page">
+    <div class="page-header">
+      <div class="page-title-group">
+        <h1>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+          First Aid Assistant
+        </h1>
+        <p>AI-powered first aid guidance — <a href="#">not a substitute for professional help</a></p>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-survey" onclick="switchTab('survey')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5h6"/></svg>
+          Quick Survey
+        </button>
+        <button class="tab-btn" id="tab-chat" onclick="switchTab('chat')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Lifeline AI – your First Aid assistance
+        </button>
+      </div>
+      <div id="survey-tab">
+        <div class="survey-card" id="step-injury">
+          <div class="steps-bar">
+            <span class="step active">1. Injury</span><span class="step-arrow">→</span>
+            <span class="step">2. Severity</span><span class="step-arrow">→</span>
+            <span class="step">3. Guidance</span>
+          </div>
+          <h3>Select injury type:</h3>
+          <div class="injury-grid">
+            <button class="injury-btn burn" onclick="selectInjury('Burn')"><span class="ib-icon">🔥</span>Burn</button>
+            <button class="injury-btn bleeding" onclick="selectInjury('Bleeding')"><span class="ib-icon">🩸</span>Bleeding</button>
+            <button class="injury-btn fracture" onclick="selectInjury('Fracture')"><span class="ib-icon">🦴</span>Fracture</button>
+            <button class="injury-btn head" onclick="selectInjury('Head Injury')"><span class="ib-icon">🧠</span>Head Injury</button>
+            <button class="injury-btn chest" onclick="selectInjury('Chest Pain')"><span class="ib-icon">❤️</span>Chest Pain</button>
+            <button class="injury-btn shock" onclick="selectInjury('Shock')"><span class="ib-icon">⚡</span>Shock</button>
+            <button class="injury-btn choking" onclick="selectInjury('Choking')"><span class="ib-icon">⚠️</span>Choking</button>
+            <button class="injury-btn other" onclick="selectInjury('Other')"><span class="ib-icon">〰️</span>Other</button>
+          </div>
+        </div>
+        <div class="survey-card" id="step-severity" style="display:none">
+          <div class="steps-bar">
+            <span class="step">1. Injury</span><span class="step-arrow">→</span>
+            <span class="step active">2. Severity</span><span class="step-arrow">→</span>
+            <span class="step">3. Guidance</span>
+          </div>
+          <h3 id="severity-title">How severe is the injury?</h3>
+          <div class="severity-btns">
+            <button class="severity-btn" onclick="selectSeverity('Mild')"><span class="severity-dot" style="background:#22c55e"></span><div><strong>Mild</strong> — Minor discomfort, manageable at home</div></button>
+            <button class="severity-btn" onclick="selectSeverity('Moderate')"><span class="severity-dot" style="background:#f59e0b"></span><div><strong>Moderate</strong> — Significant pain or limited function</div></button>
+            <button class="severity-btn" onclick="selectSeverity('Severe')"><span class="severity-dot" style="background:#ef4444"></span><div><strong>Severe</strong> — Life-threatening, call emergency immediately</div></button>
+          </div>
+          <button class="back-btn" onclick="goBack('severity')">← Back</button>
+        </div>
+        <div class="survey-card" id="step-guidance" style="display:none">
+          <div class="steps-bar">
+            <span class="step">1. Injury</span><span class="step-arrow">→</span>
+            <span class="step">2. Severity</span><span class="step-arrow">→</span>
+            <span class="step active">3. Guidance</span>
+          </div>
+          <div class="guidance-content" id="guidance-body"></div>
+          <button class="back-btn" onclick="goBack('guidance')">← Start Over</button>
+        </div>
+      </div>
+      <div id="chat-tab" style="display:none">
+        <div class="chat-card">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg">
+              <div class="msg-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg></div>
+              <div class="msg-bubble">Hello! I'm <strong>Lifeline AI</strong> – your First Aid assistant (powered by Google Gemini). Describe your injury or symptoms and I'll provide immediate first aid guidance. <strong>This is not a substitute for professional medical care.</strong></div>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" type="text" placeholder="Describe your injury or symptoms..." onkeydown="if(event.key==='Enter') sendChat()"/>
+            <button class="chat-send-btn" onclick="sendChat()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-emergency-numbers">
+          <h4>🚨 Emergency Helplines</h4>
+          <ul>
+            <li><span class="emergency-icon">🚑</span> Ambulance: <strong>108</strong></li>
+            <li><span class="emergency-icon">🚓</span> Police: <strong>100</strong></li>
+            <li><span class="emergency-icon">🚒</span> Fire: <strong>101</strong></li>
+          </ul>
+        </div>
+        <div class="footer-copyright">
+          <p>© 2026 TS Medi-O-Care™ – We care for the mediocres</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ABOUT US PAGE (NO MAIL BOXES, NO CONTACT SECTION) -->
+  <div id="page-about" class="page">
+    <div class="page-header">
+      <div class="page-title-group">
+        <h1>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          About Us
+        </h1>
+        <p>Who we are and our mission</p>
+      </div>
+    </div>
+    <div class="page-content about-content">
+      <!-- Big info box -->
+      <div class="about-info-box">
+        <h2>TS Medi-O-Care™ — We care for the mediocres</h2>
+        <p>Founded by <strong>Shriyan Tandale</strong> and co‑founded by <strong>Tirth Mendapara</strong>, TS Medi-O-Care™ is an emergency response platform designed to save lives through technology and community. Our mission is to provide instant access to emergency services, blood donor networks, and AI‑powered first aid guidance — all while keeping user safety and privacy at the forefront.</p>
+        <p>We believe that every second counts in an emergency. That's why we built a system that connects you to nearby hospitals and offers reliable first‑aid advice when you need it most.</p>
+        <p><strong>Our vision:</strong> A world where no one faces a medical crisis alone. We care for the mediocres — because everyone deserves a lifeline.</p>
+      </div>
+
+      <!-- Founder info boxes (no contact section) -->
+      <div class="founder-info-section">
+        <div class="founder-info-box">
+          <h3>👨‍💻 Shriyan Tandale – Founder & Creator</h3>
+          <p>Shriyan Tandale is the visionary behind TS Medi-O-Care™. With a passion for leveraging technology to save lives, he designed the core emergency response system, integrated real-time location sharing, and built the blood donor network. His mission is to make emergency assistance accessible to everyone, especially those who often get overlooked – the "mediocres".</p>
+          <p><strong>Expertise:</strong> Full‑stack development, emergency response systems, AI integration.</p>
+        </div>
+        <div class="founder-info-box">
+          <h3>👨‍💻 Tirth Mendapara – Co‑founder & Creator</h3>
+          <p>Tirth Mendapara co‑founded TS Medi-O-Care™ to bring a collaborative vision to life. He focuses on user experience, community outreach, and ensuring that the platform remains intuitive and reliable in high‑pressure situations. Tirth believes that technology should serve humanity, and he works tirelessly to keep the platform free, fast, and friendly.</p>
+          <p><strong>Expertise:</strong> UI/UX design, community management, emergency protocols.</p>
+        </div>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-emergency-numbers">
+          <h4>🚨 Emergency Helplines</h4>
+          <ul>
+            <li><span class="emergency-icon">🚑</span> Ambulance: <strong>108</strong></li>
+            <li><span class="emergency-icon">🚓</span> Police: <strong>100</strong></li>
+            <li><span class="emergency-icon">🚒</span> Fire: <strong>101</strong></li>
+          </ul>
+        </div>
+        <div class="footer-copyright">
+          <p>© 2026 TS Medi-O-Care™ – We care for the mediocres</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
